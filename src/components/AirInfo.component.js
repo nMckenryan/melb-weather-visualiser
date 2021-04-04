@@ -23,10 +23,9 @@ export default class AirInfo extends Component {
         //Retrieving from OpenWeatherMap, as AirVisual does not have historical data.
         axios.get("https://api.openweathermap.org/data/2.5/onecall?lat=-37.8136&lon=144.9631&exclude={current,minutely,hourly,alerts)&units={metric}&appid=" + this.openWeatherKey)
         .then(res => {
-            
             res.data.daily.map(item => {                
                 return this.setState({ 
-                    dates: [...this.state.dates, new Date (item.dt * 1000).toLocaleDateString()], //convert from Epoch to date. 
+                    dates: [...this.state.dates, new Date (item.dt * 1000).toLocaleDateString('en-au')], //convert from Epoch to date. 
                     windSpeed: [...this.state.windSpeed, item.wind_speed],
                     temp: [...this.state.temp, (item.temp.day/10).toFixed(1)],
                     humidity: [...this.state.humidity, item.humidity],
@@ -72,7 +71,7 @@ export default class AirInfo extends Component {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        max: 60, //max value for the chart is 60
+                        max: Math.max(...this.state.humidity) + 2.5, //scales according to highest humidity, with added headroom. 
                         scaleOverride: true,
                         stepSide: 2,
                         scaleSteps: 5
